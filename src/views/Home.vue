@@ -1,175 +1,106 @@
 <template>
-  <b-container fluid>
-    <!-- User Interface controls -->
+<div>
+  <b-container fluid class="col-md-8 offset-md-2">
     <b-row>
-      <b-col lg="6" class="my-1">
-        <b-form-group
-          label="Filter"
-          label-cols-sm="3"
-          label-align-sm="right"
-          label-size="sm"
-          label-for="filterInput"
-          class="mb-0"
-        >
-          <b-input-group size="sm">
-            <b-form-input
-              v-model="filter"
-              type="search"
-              id="filterInput"
-              placeholder="Type to Search"
-            ></b-form-input>
-            <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Clear</b-button>
-            </b-input-group-append>
-          </b-input-group>
-        </b-form-group>
-      </b-col>
+      <div style="text-align:center" v-if="allUser.length == 0">Loading...</div>
+      <div class="table-responsive" v-else>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Roles</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(user,index) in allUser" :key="index">
+                <th scope="row">{{index+1}}</th>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{getRoles(user.roles)}}</td>
+                <td class="action-btn">
+                  <b-button id="show-btn" size="sm" @click="$bvModal.show(`bv-modal-edit-${user.id}`)">EDIT</b-button>
+                  <b-button id="show-btn" size="sm" class="ml-1 mt-sm-1" @click="$bvModal.show(`bv-modal-delete-${user.id}`)" variant="danger">DELETE</b-button>
+                </td>
 
-      <b-col sm="7" md="6" class="my-1">
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          align="fill"
-          size="sm"
-          class="my-0"
-        ></b-pagination>
-      </b-col>
+                <!-- Modal for Edit details -->
+                <b-modal :id="`bv-modal-edit-${user.id}`" hide-footer>
+                  <template slot="modal-title">
+                     <code>EDIT INFO</code>
+                  </template>
+                  <div class="d-block text-center">
+                    <h3>Hello From This Modal!</h3>
+                  </div>
+                  <b-button class="mt-3" block @click="$bvModal.hide(`bv-modal-edit-${user.id}`)">Close Me</b-button>
+                </b-modal>
+
+                <!-- Modal for delete details -->
+                <b-modal :id="`bv-modal-delete-${user.id}`" hide-footer>
+                  <template slot="modal-title">
+                    <code>DELETE INFO</code>
+                  </template>
+                  <div class="d-block text-center">
+                    <h6>Are you sure??</h6>
+                  </div>
+
+                  <b-button class="mt-1" block @click="deleteUser(user.id)" squared variant="outline-danger">Delete</b-button>
+                  <b-button class="mt-1" block @click="$bvModal.hide(`bv-modal-delete-${user.id}`)" squared variant="outline-secondary">Close Me</b-button>
+                </b-modal>
+              </tr>
+            </tbody>
+        </table>
+      </div>
     </b-row>
-
-    <!-- Main table element -->
-    <b-table
-      show-empty
-      small
-      stacked="md"
-      :items="items"
-      :fields="fields"
-      :current-page="currentPage"
-      :per-page="perPage"
-      :filter="filter"
-      :filterIncludedFields="filterOn"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
-      :sort-direction="sortDirection"
-      @filtered="onFiltered"
-    >
-      <template slot="[name]" slot-scope="row">
-        {{ row.value.first }} {{ row.value.last }}
-      </template>
-
-      <template slot="[actions]" slot-scope="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
-
-      <template slot="row-details" slot-scope="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
-      </template>
-    </b-table>
-
-    <!-- Info modal -->
-    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal>
   </b-container>
+
+</div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
   data () {
     return {
-      items: [
-        { isActive: true, age: 40, name: { first: 'Dickerson', last: 'Macdonald' } },
-        { isActive: false, age: 21, name: { first: 'Larsen', last: 'Shaw' } },
-        {
-          isActive: false,
-          age: 9,
-          name: { first: 'Mini', last: 'Navarro' },
-          _rowVariant: 'success'
-        },
-        { isActive: false, age: 89, name: { first: 'Geneva', last: 'Wilson' } },
-        { isActive: true, age: 38, name: { first: 'Jami', last: 'Carney' } },
-        { isActive: false, age: 27, name: { first: 'Essie', last: 'Dunlap' } },
-        { isActive: true, age: 40, name: { first: 'Thor', last: 'Macdonald' } },
-        {
-          isActive: true,
-          age: 87,
-          name: { first: 'Larsen', last: 'Shaw' },
-          _cellVariants: { age: 'danger', isActive: 'warning' }
-        },
-        { isActive: false, age: 26, name: { first: 'Mitzi', last: 'Navarro' } },
-        { isActive: false, age: 22, name: { first: 'Genevieve', last: 'Wilson' } },
-        { isActive: true, age: 38, name: { first: 'John', last: 'Carney' } },
-        { isActive: false, age: 29, name: { first: 'Dick', last: 'Dunlap' } }
-      ],
-      fields: [
-        { key: 'name', label: 'Person Full name', sortable: true, sortDirection: 'desc' },
-        { key: 'age', label: 'Person age', sortable: true, class: 'text-center' },
-        {
-          key: 'isActive',
-          label: 'is Active',
-          formatter: (value, key, item) => {
-            return value ? 'Yes' : 'No'
-          },
-          sortable: true,
-          sortByFormatted: true,
-          filterByFormatted: true
-        },
-        { key: 'actions', label: 'Actions' }
-      ],
-      totalRows: 1,
-      currentPage: 1,
-      perPage: 5,
-      pageOptions: [5, 10, 15],
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: ''
-      }
     }
+  },
+  created () {
+    this.getUsers()
   },
   computed: {
-    sortOptions () {
-      // Create an options list from our fields
-      return this.fields
-        .filter(f => f.sortable)
-        .map(f => {
-          return { text: f.label, value: f.key }
-        })
+    ...mapState({
+      users: state => state.userList
+    }),
+    allUser () {
+      return this.users
     }
   },
-  mounted () {
-    // Set the initial number of items
-    this.totalRows = this.items.length
-  },
   methods: {
-    info (item, index, button) {
-      this.infoModal.title = `Row index: ${index}`
-      this.infoModal.content = JSON.stringify(item, null, 2)
-      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    ...mapActions([
+      'getUsers'
+    ]),
+    // get the roles in 'role1,role2' format
+    getRoles (role) {
+      let data = ''
+      for (let index = 0; index < role.length; index++) {
+        data += role[index].name + ','
+        if (index === (role.length - 1)) {
+          data += role[index].name
+        }
+      }
+      return data
     },
-    resetInfoModal () {
-      this.infoModal.title = ''
-      this.infoModal.content = ''
-    },
-    onFiltered (filteredItems) {
-      // Trigger pagination to update the number of buttons/pages due to filtering
-      this.totalRows = filteredItems.length
-      this.currentPage = 1
+    deleteUser (id) {
+      console.log(id)
     }
   }
 }
 </script>
+
+<style>
+  .action-btn{
+    margin: 0 auto;
+  }
+</style>
