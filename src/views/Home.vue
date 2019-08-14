@@ -2,7 +2,9 @@
 <div>
   <b-container fluid class="col-md-8 offset-md-2">
     <b-row>
-      <div style="text-align:center" v-if="allUser.length == 0">Loading...</div>
+      <div class="d-block text-center" v-if="allUser.length == 0">
+        <h5 class="text-center">Loading...</h5>
+      </div>
       <div class="table-responsive" v-else>
         <table class="table">
             <thead>
@@ -21,8 +23,8 @@
                 <td>{{user.email}}</td>
                 <td>{{getRoles(user.roles)}}</td>
                 <td class="action-btn">
-                  <b-button id="show-btn" size="sm" @click="$bvModal.show(`bv-modal-edit-${user.id}`)">EDIT</b-button>
-                  <b-button id="show-btn" size="sm" class="ml-1 mt-sm-1" @click="$bvModal.show(`bv-modal-delete-${user.id}`)" variant="danger">DELETE</b-button>
+                  <b-button id="show-btn" class="mt-1" size="sm" @click="$bvModal.show(`bv-modal-edit-${user.id}`);getUser(user.id)">EDIT</b-button>
+                  <b-button id="show-btn" size="sm" class="ml-1 mt-1" @click="$bvModal.show(`bv-modal-delete-${user.id}`)" variant="danger">DELETE</b-button>
                 </td>
 
                 <!-- Modal for Edit details -->
@@ -30,13 +32,52 @@
                   <template slot="modal-title">
                      <code>EDIT INFO</code>
                   </template>
-                  <div class="d-block text-center">
-                    <h3>Hello From This Modal!</h3>
+                  <div class="d-block">
+                    <div class="d-block text-center" v-if="singleUser.length == 0">
+                      <h5 class="text-center">Loading...</h5>
+                    </div>
+                    <b-form @submit="onSubmit" v-else>
+                      <b-form-group id="input-group-2" label="Your Name:" label-for="input-2">
+                        <b-form-input
+                          id="input-2"
+                          v-model="form.name"
+                          required
+                          placeholder="Enter name"
+                        ></b-form-input>
+                      </b-form-group>
+
+                      <b-form-group
+                        id="input-group-1"
+                        label="Email address:"
+                        label-for="input-1"
+                      >
+                        <b-form-input
+                          id="input-1"
+                          v-model="form.email"
+                          type="email"
+                          required
+                          placeholder="Enter email"
+                        ></b-form-input>
+                      </b-form-group>
+
+                      <b-form-group id="input-group-3" label="Roles:" label-for="input-3">
+                        <b-form-select
+                          id="input-3"
+                          v-model="form.role"
+                          multiple
+                          required
+                        >
+                        <option v-for="(role, index) in roles" :key="index" :value="`${role.id}`">{{role.name}}</option>
+                        </b-form-select>
+                      </b-form-group>
+
+                      <b-button type="submit" block variant="primary">Update</b-button>
+                    </b-form>
                   </div>
                   <b-button class="mt-3" block @click="$bvModal.hide(`bv-modal-edit-${user.id}`)">Close Me</b-button>
                 </b-modal>
 
-                <!-- Modal for delete details -->
+                <!-- Modal for delete user -->
                 <b-modal :id="`bv-modal-delete-${user.id}`" hide-footer>
                   <template slot="modal-title">
                     <code>DELETE INFO</code>
@@ -64,36 +105,95 @@ import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
+      form: {
+        id: null,
+        email: '',
+        name: '',
+        role: []
+      },
+      show: true
     }
   },
   created () {
     this.getUsers()
+    this.getRole()
   },
   computed: {
     ...mapState({
-      users: state => state.userList
+      users: state => state.userList,
+      user: state => state.user,
+      role: state => state.role
     }),
     allUser () {
       return this.users
+    },
+    singleUser () {
+      return this.user
+    },
+    roles () {
+      return this.role
     }
   },
   methods: {
     ...mapActions([
-      'getUsers'
+      'getUsers',
+      'getSingleUser',
+      'getRole',
+      'updateInfo',
+      'userDelete'
     ]),
     // get the roles in 'role1,role2' format
     getRoles (role) {
       let data = ''
       for (let index = 0; index < role.length; index++) {
-        data += role[index].name + ','
         if (index === (role.length - 1)) {
           data += role[index].name
+        } else {
+          data += role[index].name + ','
         }
       }
       return data
     },
     deleteUser (id) {
-      console.log(id)
+      this.userDelete(id).then((result) => {
+        // call the API for updated data
+        this.getUsers()
+        // console.log(`#bv-modal-delete-${id}`)
+        this.$bvModal.hide(`bv-modal-delete-${id}`)
+      })
+    },
+    onSubmit (evt) {
+      evt.preventDefault()
+      // alert(JSON.stringify(this.form))
+      const info = {
+        'id': this.form.id,
+        data: {
+          'name': this.form.name,
+          'email': this.form.email,
+          'roles': this.form.role
+        }
+      }
+      this.updateInfo(info).then((result) => {
+        // call the API for updated data
+        this.getUsers()
+        // console.log(`#bv-modal-edit-${this.form.id}`)
+        this.$bvModal.hide(`bv-modal-edit-${this.form.id}`)
+      })
+    },
+    getUser (id) {
+      // console.log(id)
+      this.getSingleUser(id).then((result) => {
+        this.form.id = id
+        this.form.role = []
+        this.form.email = this.user.email
+        this.form.name = this.user.name
+        for (let i = 0; i < this.user.roles.length; i++) {
+          this.form.role.push(this.user.roles[i].id)
+        }
+        // console.log(this.form.role)
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 }

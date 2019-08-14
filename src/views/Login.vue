@@ -34,13 +34,15 @@
         ></b-form-input>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-button type="reset" variant="danger">Reset</b-button>
+      <b-button type="submit" block variant="primary">Submit</b-button>
+      <b-button type="reset" block variant="danger">Reset</b-button>
     </b-form>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'LoginVue',
   data () {
@@ -54,9 +56,21 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'login'
+    ]),
     onSubmit (evt) {
       evt.preventDefault()
-      alert(JSON.stringify(this.form))
+      // alert(JSON.stringify(this.form))
+      const data = {
+        email: this.form.email,
+        password: this.form.password
+      }
+      this.login(data).then((result) => {
+        this.$router.push('/')
+      }).catch((err) => {
+        console.log(err)
+      })
     },
     onReset (evt) {
       evt.preventDefault()
