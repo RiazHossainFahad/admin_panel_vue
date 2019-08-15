@@ -1,6 +1,6 @@
 <template>
   <div class="check" style="margin-top:1%">
-    <div class="h3">Add User</div>
+    <div class="h3 text-center">Add User</div>
 
     <b-alert
       variant="success"

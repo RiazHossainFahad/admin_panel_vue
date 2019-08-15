@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import data from '@/assets/all-data'
 
 Vue.use(Vuex)
 
@@ -11,7 +10,8 @@ export default new Vuex.Store({
     userList: [],
     user: [],
     role: [],
-    msg: ''
+    msg: '',
+    import: []
   },
   mutations: {
     SET_USER_PROFILE (state, payload) {
@@ -32,6 +32,10 @@ export default new Vuex.Store({
 
     SET_MSG (state, payload) {
       state.msg = payload
+    },
+
+    SET_IMPORT (state, payload) {
+      state.import = payload
     }
   },
   actions: {
@@ -59,7 +63,7 @@ export default new Vuex.Store({
     getSingleUser ({ commit }, id) {
       return axios.get(`/api/user/${id}`, {
         headers: {
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       })
         .then(result => {
@@ -80,17 +84,17 @@ export default new Vuex.Store({
       return axios.post('/api/user', payload, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       }).then(result => {
         commit('SET_MSG', result.data.success.msg)
-        console.log(result.data.success.data)
+        // console.log(result.data.success.data)
       }).catch(err => console.log(err.response.data.error))
     },
     updateInfo ({ commit }, info) {
       return axios.put(`/api/user/${info.id}`, info.data, {
         headers: {
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       })
         .then(result => {
@@ -100,40 +104,27 @@ export default new Vuex.Store({
     userDelete ({ commit }, id) {
       return axios.delete(`/api/user/${id}`, {
         headers: {
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       })
         .then(result => {
         })
         .catch(err => console.log(err))
     },
-    import ({ commit }, data) {
-      return axios.post('/api/import', data, {
+    import ({ commit }, payload) {
+      return axios.post('/api/import', payload, {
         headers: {
-          'Authorization': data.token,
+          'Authorization': localStorage.getItem('token'),
           'Content-Type': 'multipart/form-data'
         }
-      })
-        .then(result => {
-        })
-        .catch(err => console.log(err))
-    },
-    export ({ commit }) {
-      return axios.get('/api/export', {
-        headers: {
-          'Authorization': data.token,
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then(result => {
-          console.log(result)
-        })
-        .catch(err => console.log(err))
+      }).then(result => {
+        commit('SET_IMPORT', result.data.data)
+      }).catch(err => console.log(err))
     },
     logout ({ commit }) {
       return axios.get(`/api/logout`, {
         headers: {
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       })
         .then(result => {
