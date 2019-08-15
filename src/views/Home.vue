@@ -6,6 +6,16 @@
         <h5 class="text-center">Loading...</h5>
       </div>
       <div class="table-responsive" v-else>
+       <div class="align-h-right">
+         <b-button class="my-3" block size="sm">
+           <export-excel
+              :data = "exportData()"
+              type = "csv"
+              name = "filename.xls">
+              Download Excel
+          </export-excel>
+         </b-button>
+         </div>
         <table class="table">
             <thead>
               <tr>
@@ -140,7 +150,8 @@ export default {
       'getSingleUser',
       'getRole',
       'updateInfo',
-      'userDelete'
+      'userDelete',
+      'export'
     ]),
     // get the roles in 'role1,role2' format
     getRoles (role) {
@@ -194,6 +205,21 @@ export default {
       }).catch((err) => {
         console.log(err)
       })
+    },
+    exportData () {
+      let data = []
+      for (let i = 0; i < this.allUser.length; i++) {
+        let tmp = {
+          ID: this.allUser[i].id,
+          Name: this.allUser[i].name,
+          Email: this.allUser[i].email,
+          Password: this.allUser[i].password,
+          Roles: this.getRoles(this.allUser[i].roles)
+        }
+        // console.log(`${i}`, this.roleForCSV(this.allUser[i].roles))
+        data.push(tmp)
+      }
+      return data
     }
   }
 }

@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from './views/Layout'
-import Login from './views/Login.vue'
-import Home from './views/Home.vue'
-import AddUser from './views/AddUser.vue'
+import Login from './views/Login'
+import Home from './views/Home'
+import AddUser from './views/AddUser'
+import Import from './views/Import'
 
 Vue.use(Router)
 
@@ -35,6 +36,14 @@ const router = new Router({
           meta: {
             noAuthRequired: false
           }
+        },
+        {
+          path: 'import',
+          name: 'Import',
+          component: Import,
+          meta: {
+            noAuthRequired: false
+          }
         }
       ]
     },
@@ -55,17 +64,6 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
   let isAuthenticated = localStorage.getItem('token')
-  // if (to.fullPath === '/') {
-  //   if (!token) {
-  //     next('/login')
-  //   }
-  // }
-  // if (to.fullPath === '/login') {
-  //   if (token) {
-  //     next('/')
-  //   }
-  // }
-  // next()
   let noAuthRequired = to.matched.some(record => record.meta.noAuthRequired)
   // when route requires auth and there's no current user, reidrect to '/login'
   if (!noAuthRequired && !isAuthenticated) {

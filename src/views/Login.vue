@@ -99,7 +99,4 @@ export default {
     border: 1px solid #dddddd;
     background-color: #ffffff;
   }
-  .btn-danger{
-    margin-left: 10px
-  }
 </style>

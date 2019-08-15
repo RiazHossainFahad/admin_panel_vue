@@ -47,7 +47,7 @@ export default new Vuex.Store({
     getUsers ({ commit }) {
       return axios.get('/api/user', {
         headers: {
-          'Authorization': data.token
+          'Authorization': localStorage.getItem('token')
         }
       })
         .then(result => {
@@ -104,6 +104,29 @@ export default new Vuex.Store({
         }
       })
         .then(result => {
+        })
+        .catch(err => console.log(err))
+    },
+    import ({ commit }, data) {
+      return axios.post('/api/import', data, {
+        headers: {
+          'Authorization': data.token,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+        .then(result => {
+        })
+        .catch(err => console.log(err))
+    },
+    export ({ commit }) {
+      return axios.get('/api/export', {
+        headers: {
+          'Authorization': data.token,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+        .then(result => {
+          console.log(result)
         })
         .catch(err => console.log(err))
     },

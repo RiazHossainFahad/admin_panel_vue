@@ -10,6 +10,7 @@
          <b-navbar-nav>
            <b-nav-item href="/">SHOW USERS</b-nav-item>
            <b-nav-item href="add">ADD USER</b-nav-item>
+           <b-nav-item href="import">Import Data</b-nav-item>
          </b-navbar-nav>
 
          <!-- Right aligned nav items -->
