@@ -1,0 +1,8 @@
+ID,Name,Email,Password,Roles
+"=""1""","=""Fahad""","=""fahad@gmail.com""","=""$2y$10$pNYLD1iR9QihPrAAnfSIguu5qqOXCVJtMFzIiIk5g318NULbds7Tm""","=""Admin,User,Super Admin"""
+"=""2""","=""Nihal""","=""nihal@gmail.com""","=""$2y$10$mMhsdgMMKuw13q0gyJ.lMOMrFcYVXo33itu4mGBzoz7JhxpTAuRnO""","=""Admin,User"""
+"=""15""","=""new 10""","=""new10@test.com""","=""$2y$10$wCcDoeI/M0OJrDZJ/mTQP.2XeINnT7HEtJax1k/ygjztJ3WPiidJK""","=""User"""
+"=""23""","=""test""","=""test@test.com""","=""$2y$10$.KrEWjQ.YwNEMJBRziJgH.EPF.eDQRZGwGdb5Ar26qFgbfFT0shZi""","=""User"""
+"=""25""","=""test1""","=""test1@test.com""","=""$2y$10$5GnXOJZM/Ghm2svvcMN9zeUyIgI2rjw1siri9.cdxH2Du1t2.NW5K""","=""User"""
+"=""27""","=""new""","=""new1@test.com""","=""$2y$10$erYIN9Tcc./ZgDgGBXFESuraTMbjlFrDr6afG1jsrZfKy94fT4jtq""","=""Admin"""
+"=""29""","=""new test""","=""new@test.com""","=""$2y$10$RvgDFZHzhwsNEMf8I.qN6usgs8Xp9qRJbnpM7TFShpN0N6NI4ba7m""","=""User"""
