@@ -1,29 +1,35 @@
-# admin_panel_vue
+# Admin Panel(Frontend-vue)
+This is the front end part for admin panel project. The data's are came from API call from another project which is needed to run this project.
+__Backend Part Link__: https://github.com/RiazHossainFahad/admin_panel
 
-## Project setup
-```
-npm install
-```
+### Features
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+- Login
+- Showing all users
+- Export in excel(__CSV ONLY__)
+- Edit/Delete User
+- Add User
+- Import from Excel(__CSV ONLY__ Demo File Given in __Backup Folder__)
+- Logout
 
-### Compiles and minifies for production
-```
-npm run build
-```
+(All the API call need token for authorization(__Localstorage is used for store the token while logged in__))
 
-### Run your tests
-```
-npm run test
-```
+---
+### Project setup
 
-### Lints and fixes files
-```
-npm run lint
-```
+- Clone the repository with __git clone__
+- Run __npm install__
+- Run __npm run serve__
+- That's it
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+---
+
+### License
+
+Please use and re-use however you want.
+
+---
+
+## Contributing
+
+Welcome to any contributor. Thank You :).
