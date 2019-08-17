@@ -122,6 +122,7 @@ export default new Vuex.Store({
       }).catch(err => console.log(err))
     },
     logout ({ commit }) {
+      localStorage.removeItem('roles')
       return axios.get(`/api/logout`, {
         headers: {
           'Authorization': localStorage.getItem('token')

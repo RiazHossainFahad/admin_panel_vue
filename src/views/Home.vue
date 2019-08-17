@@ -32,7 +32,7 @@
                 <td>{{user.name}}</td>
                 <td>{{user.email}}</td>
                 <td>{{getRoles(user.roles)}}</td>
-                <td class="action-btn">
+                <td v-if="currentLoginUserRole() !== 'User'" class="action-btn">
                   <b-button id="show-btn" class="mt-1" size="sm" @click="$bvModal.show(`bv-modal-edit-${user.id}`);getUser(user.id)">EDIT</b-button>
                   <b-button id="show-btn" size="sm" class="ml-1 mt-1" @click="$bvModal.show(`bv-modal-delete-${user.id}`)" variant="danger">DELETE</b-button>
                 </td>
@@ -220,6 +220,10 @@ export default {
         data.push(tmp)
       }
       return data
+    },
+    currentLoginUserRole () {
+      // console.log(localStorage.getItem('roles'))
+      return localStorage.getItem('roles')
     }
   }
 }

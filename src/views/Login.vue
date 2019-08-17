@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'LoginVue',
@@ -55,6 +55,11 @@ export default {
       show: true
     }
   },
+  computed: {
+    ...mapState({
+      userProfile: state => state.userProfile
+    })
+  },
   methods: {
     ...mapActions([
       'login'
@@ -67,6 +72,8 @@ export default {
         password: this.form.password
       }
       this.login(data).then((result) => {
+        const roles = this.getRoles(this.userProfile.roles)
+        localStorage.setItem('roles', roles)
         this.$router.push('/')
       }).catch((err) => {
         console.log(err)
@@ -82,6 +89,18 @@ export default {
       this.$nextTick(() => {
         this.show = true
       })
+    },
+    // get the roles in 'role1,role2' format
+    getRoles (role) {
+      let data = ''
+      for (let index = 0; index < role.length; index++) {
+        if (index === (role.length - 1)) {
+          data += role[index].name
+        } else {
+          data += role[index].name + ','
+        }
+      }
+      return data
     }
   }
 }
